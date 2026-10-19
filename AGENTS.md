@@ -14,6 +14,8 @@ O uso da API para pessoas está no `README.md`. Não copie essa documentação p
 | --- | --- |
 | Testes | `./gradlew test` |
 | Um teste | `./gradlew test --tests com.dev.pedidos_api.CrudControllersTest` |
+| Formatar | `./gradlew spotlessApply` |
+| Verificar formato | `./gradlew spotlessCheck` |
 | Subir a API | `./gradlew bootRun` |
 
 A porta padrão é `8080`. A referência interativa é `/scalar` e o OpenAPI JSON é `/v3/api-docs`.
@@ -21,7 +23,7 @@ A porta padrão é `8080`. A referência interativa é `/scalar` e o OpenAPI JSO
 ## Convenções
 
 - Mantenha o pacote único `com.dev.pedidos_api`. Não crie subpacotes.
-- Indente com tab, como o código existente.
+- Indente com tab, como o código existente. O formato Java é o Eclipse JDT, aplicado pelo Spotless.
 - Escreva mensagens de erro e textos do OpenAPI em português.
 - Modele o domínio com `record` e a persistência com `@Repository`, `JdbcClient` e SQL nomeado.
 - Flags de cliente no SQLite são `INTEGER` `0`/`1`.

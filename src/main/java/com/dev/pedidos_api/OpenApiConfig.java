@@ -11,10 +11,8 @@ public class OpenApiConfig {
 
 	@Bean
 	OpenAPI pedidosOpenApi() {
-		return new OpenAPI().info(new Info()
-				.title("Pedidos API")
-				.description("Cadastro de clientes e produtos.")
-				.version("1.0.0"));
+		return new OpenAPI()
+			.info(new Info().title("Pedidos API").description("Cadastro de clientes e produtos.").version("1.0.0"));
 	}
 
 }

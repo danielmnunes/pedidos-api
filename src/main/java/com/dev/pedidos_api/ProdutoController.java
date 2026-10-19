@@ -34,16 +34,13 @@ public class ProdutoController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> buscar(@PathVariable String id) {
-		return produtos.buscarPorId(id)
-				.<ResponseEntity<?>>map(ResponseEntity::ok)
-				.orElseGet(() -> Problemas.naoEncontrado("Produto não encontrado", "/produtos/" + id));
+		return produtos.buscarPorId(id).<ResponseEntity<?>>map(ResponseEntity::ok)
+			.orElseGet(() -> Problemas.naoEncontrado("Produto não encontrado", "/produtos/" + id));
 	}
 
 	@PostMapping
 	public ResponseEntity<Produto> inserir(@RequestBody Produto produto) {
-		var id = produto.id() != null && !produto.id().isBlank()
-				? produto.id()
-				: UUID.randomUUID().toString();
+		var id = produto.id() != null && !produto.id().isBlank() ? produto.id() : UUID.randomUUID().toString();
 		var novo = new Produto(id, produto.nome(), produto.categoria(), produto.preco(), produto.estoque());
 		produtos.inserir(novo);
 		return ResponseEntity.created(URI.create("/produtos/" + id)).body(novo);

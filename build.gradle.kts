@@ -2,6 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "4.1.1"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("com.diffplug.spotless") version "8.10.4"
 }
 
 group = "com.dev"
@@ -30,4 +31,20 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+spotless {
+	java {
+		removeUnusedImports()
+		eclipse().configProperties(
+			"""
+			org.eclipse.jdt.core.formatter.tabulation.char=tab
+			org.eclipse.jdt.core.formatter.tabulation.size=4
+			org.eclipse.jdt.core.formatter.indentation.size=4
+			org.eclipse.jdt.core.formatter.continuation_indentation=1
+			""".trimIndent(),
+		)
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
 }

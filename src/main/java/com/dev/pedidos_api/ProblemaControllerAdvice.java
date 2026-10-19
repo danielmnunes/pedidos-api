@@ -21,13 +21,10 @@ class ProblemaControllerAdvice {
 		if (causa == null || !causa.contains("UNIQUE constraint failed")) {
 			throw ex;
 		}
-		var problema = ProblemDetail.forStatusAndDetail(
-				HttpStatus.CONFLICT,
-				"Já existe um registro com esses dados");
+		var problema = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Já existe um registro com esses dados");
 		problema.setInstance(URI.create(request.getRequestURI()));
-		return ResponseEntity.status(HttpStatus.CONFLICT)
-				.contentType(MediaType.APPLICATION_PROBLEM_JSON)
-				.body(problema);
+		return ResponseEntity.status(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_PROBLEM_JSON)
+			.body(problema);
 	}
 
 }

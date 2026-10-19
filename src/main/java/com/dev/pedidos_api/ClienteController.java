@@ -35,39 +35,27 @@ public class ClienteController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> buscar(@PathVariable String id) {
-		return clientes.buscarPorId(id)
-				.<ResponseEntity<?>>map(ResponseEntity::ok)
-				.orElseGet(() -> Problemas.naoEncontrado("Cliente não encontrado", "/clientes/" + id));
+		return clientes.buscarPorId(id).<ResponseEntity<?>>map(ResponseEntity::ok)
+			.orElseGet(() -> Problemas.naoEncontrado("Cliente não encontrado", "/clientes/" + id));
 	}
 
 	@PostMapping
 	public ResponseEntity<Cliente> inserir(@RequestBody ClienteBody cliente) {
 		var id = texto(cliente.id()) ? cliente.id() : UUID.randomUUID().toString();
 		var dataCadastro = texto(cliente.dataCadastro())
-				? cliente.dataCadastro()
-				: LocalDateTime.now().withNano(0).toString();
-		var novo = new Cliente(
-				id,
-				cliente.nome(),
-				cliente.email(),
-				Boolean.TRUE.equals(cliente.vip()),
-				Boolean.TRUE.equals(cliente.corporativo()),
-				Boolean.TRUE.equals(cliente.bloqueado()),
-				dataCadastro);
+			? cliente.dataCadastro()
+			: LocalDateTime.now().withNano(0).toString();
+		var novo = new Cliente(id, cliente.nome(), cliente.email(), Boolean.TRUE.equals(cliente.vip()),
+			Boolean.TRUE.equals(cliente.corporativo()), Boolean.TRUE.equals(cliente.bloqueado()), dataCadastro);
 		clientes.inserir(novo);
 		return ResponseEntity.created(URI.create("/clientes/" + id)).body(novo);
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> atualizar(@PathVariable String id, @RequestBody ClienteBody cliente) {
-		var atualizado = new Cliente(
-				id,
-				cliente.nome(),
-				cliente.email(),
-				Boolean.TRUE.equals(cliente.vip()),
-				Boolean.TRUE.equals(cliente.corporativo()),
-				Boolean.TRUE.equals(cliente.bloqueado()),
-				cliente.dataCadastro());
+		var atualizado = new Cliente(id, cliente.nome(), cliente.email(), Boolean.TRUE.equals(cliente.vip()),
+			Boolean.TRUE.equals(cliente.corporativo()), Boolean.TRUE.equals(cliente.bloqueado()),
+			cliente.dataCadastro());
 		if (clientes.atualizar(atualizado) == 0) {
 			return Problemas.naoEncontrado("Cliente não encontrado", "/clientes/" + id);
 		}
@@ -86,14 +74,8 @@ public class ClienteController {
 		return valor != null && !valor.isBlank();
 	}
 
-	private record ClienteBody(
-			String id,
-			String nome,
-			String email,
-			Boolean vip,
-			Boolean corporativo,
-			Boolean bloqueado,
-			String dataCadastro) {
+	private record ClienteBody(String id, String nome, String email, Boolean vip, Boolean corporativo,
+		Boolean bloqueado, String dataCadastro) {
 	}
 
 }
