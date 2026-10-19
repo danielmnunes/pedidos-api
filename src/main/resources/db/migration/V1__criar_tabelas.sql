@@ -30,12 +30,10 @@ CREATE TABLE pedidos (
 CREATE INDEX idx_pedidos_cliente_id ON pedidos (cliente_id);
 
 CREATE TABLE itens_pedido (
-    id           TEXT    NOT NULL PRIMARY KEY,
-    pedido_id    TEXT    NOT NULL,
-    produto_id   TEXT    NOT NULL,
-    nome_produto TEXT    NOT NULL,
-    preco        NUMERIC NOT NULL,
-    quantidade   INTEGER NOT NULL,
+    id         TEXT    NOT NULL PRIMARY KEY,
+    pedido_id  TEXT    NOT NULL,
+    produto_id TEXT    NOT NULL,
+    quantidade INTEGER NOT NULL,
     FOREIGN KEY (pedido_id) REFERENCES pedidos (id),
     FOREIGN KEY (produto_id) REFERENCES produtos (id)
 );

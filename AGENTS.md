@@ -4,7 +4,7 @@
 
 API Spring Boot 4.1 com Java 25. Cadastro de clientes e produtos via JDBC (`JdbcClient`) e SQLite. Sem JPA.
 
-As tabelas `pedidos` e `itens_pedido` existem em `src/main/resources/db/migration/V1__criar_tabelas.sql` e não têm controller nem repositório. Não crie essa API sem um pedido explícito.
+`PedidoController` expõe `PedidoRepository`: `GET /pedidos` e `GET /pedidos/{id}`. A resposta traz o nome do cliente e os itens com o nome do produto. Não acrescente criação, alteração ou exclusão de pedidos sem pedido explícito.
 
 O uso da API para pessoas está no `README.md`. Não copie essa documentação para cá.
 
@@ -28,7 +28,7 @@ A porta padrão é `8080`. A referência interativa é `/scalar` e o OpenAPI JSO
 - Modele o domínio com `record` e a persistência com `@Repository`, `JdbcClient` e SQL nomeado.
 - Flags de cliente no SQLite são `INTEGER` `0`/`1`.
 - A entrada de cliente é o record privado `ClienteBody`, com `Boolean`. A resposta é `Cliente`, com `boolean`. Não una os dois tipos sem pedido.
-- Esquema novo vai em `src/main/resources/db/migration/V{n}__descricao.sql`. Não reescreva `V1__criar_tabelas.sql`.
+- O esquema fica em `src/main/resources/db/migration/V1__criar_tabelas.sql`. Não crie outra migração sem pedido explícito.
 - Dados de exemplo ficam em `src/main/resources/data.sql` e usam `INSERT OR IGNORE`.
 - Recurso ausente passa por `Problemas.naoEncontrado`. Violação de unicidade passa por `ProblemaControllerAdvice`, em `application/problem+json`.
 - A UI de documentação é o Scalar (`springdoc-openapi-starter-webmvc-scalar`). Não adicione Swagger UI.

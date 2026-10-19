@@ -1,6 +1,6 @@
 # Pedidos API
 
-API HTTP para cadastro de clientes e produtos. O esquema do banco também guarda pedidos e itens, ainda sem endpoints.
+API HTTP para cadastro de clientes e produtos e consulta de pedidos.
 
 ## Requisitos
 
@@ -36,6 +36,8 @@ A API fica em [http://localhost:8080](http://localhost:8080). Na primeira subida
 | `POST` | `/produtos` | Cria um produto |
 | `PUT` | `/produtos/{id}` | Atualiza um produto |
 | `DELETE` | `/produtos/{id}` | Remove um produto |
+| `GET` | `/pedidos` | Lista os pedidos, com o nome do cliente e os itens |
+| `GET` | `/pedidos/{id}` | Lista o pedido desse id, ou uma lista vazia |
 
 No `POST /clientes`, `id` e `dataCadastro` são opcionais. Se faltarem, a API gera um UUID e a data atual. `vip`, `corporativo` e `bloqueado` omitidos viram `false`.
 
