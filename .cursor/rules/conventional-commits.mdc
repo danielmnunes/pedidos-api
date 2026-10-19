@@ -1,0 +1,38 @@
+---
+description: Mensagens de commit no formato Conventional Commits 1.0.0
+alwaysApply: true
+---
+
+# Conventional Commits
+
+Siga [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) ao criar um commit.
+
+```
+<tipo>[escopo opcional][!]: <descrição>
+
+[corpo opcional]
+
+[rodapé opcional]
+```
+
+- A descrição é em português, no imperativo, e resume por que a mudança existe.
+- Deixe uma linha em branco antes do corpo e antes de cada rodapé.
+- `feat` adiciona comportamento. `fix` corrige um defeito.
+- Outros tipos permitidos: `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`.
+- O escopo é um substantivo entre parênteses, como `feat(pedidos):`.
+- Mudança incompatível leva `!` antes dos dois-pontos ou o rodapé `BREAKING CHANGE: descrição`.
+- Não junte assuntos diferentes no mesmo commit.
+
+```
+feat(pedidos): expõe a consulta de pedidos com o nome do cliente
+
+docs: descreve como formatar o código com o Spotless
+```
+
+```
+feat!: remove o campo legado de status do pedido
+
+BREAKING CHANGE: clientes que leem `statusLegado` precisam usar `status`.
+```
+
+Evite mensagens sem tipo, como `Adiciona a consulta de pedidos`.
