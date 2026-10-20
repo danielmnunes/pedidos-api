@@ -8,7 +8,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.math.BigDecimal;
 import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -138,5 +142,61 @@ class CrudControllersTest {
 
 		mockMvc.perform(get("/pedidos/" + UUID.randomUUID())).andExpect(status().isOk())
 			.andExpect(content().json("[]"));
+	}
+
+	@Test
+	void criaPedidoComDescontos() throws Exception {
+		var vipAbaixoDoLimite = criarPedido(
+			"""
+				{"clienteId":"97b36cfb-76f7-5c00-a772-af57c9288ab3","itens":[{"produtoId":"cf6d3d8d-d3a0-554d-9336-2e968b4a5d85","quantidade":2}]}
+				""");
+		assertEquals(0, new BigDecimal("629.82").compareTo(totalDoPedido(vipAbaixoDoLimite)));
+
+		var comumAcimaDoLimite = criarPedido(
+			"""
+				{"clienteId":"1c5d07e5-e1f1-5218-b971-ed105a63c9bd","itens":[{"produtoId":"865d3129-5149-5ef4-ac8c-4ae39217e103","quantidade":2}]}
+				""");
+		assertEquals(0, new BigDecimal("3038.10").compareTo(totalDoPedido(comumAcimaDoLimite)));
+
+		var vipAcimaDoLimite = criarPedido(
+			"""
+				{"clienteId":"97b36cfb-76f7-5c00-a772-af57c9288ab3","itens":[{"produtoId":"d5734acf-c4c7-53f0-884d-e0c64c4f1f32","quantidade":1},{"produtoId":"865d3129-5149-5ef4-ac8c-4ae39217e103","quantidade":1}]}
+				""");
+		assertEquals(0, new BigDecimal("2983.095").compareTo(totalDoPedido(vipAcimaDoLimite)));
+
+		mockMvc.perform(get("/pedidos/" + vipAbaixoDoLimite)).andExpect(status().isOk())
+			.andExpect(jsonPath("$[0].cliente").value("Ana Ferreira"))
+			.andExpect(jsonPath("$[0].status").value("Pendente"))
+			.andExpect(jsonPath("$[0].itens[0].produto").value("Teclado mecânico"))
+			.andExpect(jsonPath("$[0].itens[0].quantidade").value(2));
+	}
+
+	@Test
+	void recusaPedidoComClienteOuProdutoInexistente() throws Exception {
+		mockMvc.perform(post("/pedidos").contentType(MediaType.APPLICATION_JSON).content("""
+			{"clienteId":"%s","itens":[{"produtoId":"cf6d3d8d-d3a0-554d-9336-2e968b4a5d85","quantidade":1}]}
+			""".formatted(UUID.randomUUID()))).andExpect(status().isBadRequest())
+			.andExpect(content().string("Cliente não encontrado."));
+
+		var produtoId = UUID.randomUUID().toString();
+		mockMvc.perform(post("/pedidos").contentType(MediaType.APPLICATION_JSON).content("""
+			{"clienteId":"97b36cfb-76f7-5c00-a772-af57c9288ab3","itens":[{"produtoId":"%s","quantidade":1}]}
+			""".formatted(produtoId))).andExpect(status().isBadRequest())
+			.andExpect(content().string("Produto " + produtoId + " não encontrado."));
+	}
+
+	private String criarPedido(String json) throws Exception {
+		var resposta = mockMvc.perform(post("/pedidos").contentType(MediaType.APPLICATION_JSON).content(json))
+			.andExpect(status().isOk()).andReturn();
+		var corpo = resposta.getResponse().getContentAsString().trim();
+		if (corpo.startsWith("\"") && corpo.endsWith("\"")) {
+			return corpo.substring(1, corpo.length() - 1);
+		}
+		return corpo;
+	}
+
+	private BigDecimal totalDoPedido(String id) {
+		return jdbcClient.sql("SELECT total FROM pedidos WHERE id = :id").param("id", id).query(BigDecimal.class)
+			.single();
 	}
 }

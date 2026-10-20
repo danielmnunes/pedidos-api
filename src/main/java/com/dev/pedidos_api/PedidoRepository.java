@@ -50,6 +50,22 @@ public class PedidoRepository {
 			""").param("pedidoId", pedidoId).query(LINHA).list());
 	}
 
+	public void inserir(String id, String clienteId, String status, BigDecimal total, String dataCriacao) {
+		jdbcClient.sql("""
+			INSERT INTO pedidos (id, cliente_id, status, total, data_criacao)
+			VALUES (:id, :clienteId, :status, :total, :dataCriacao)
+			""").param("id", id).param("clienteId", clienteId).param("status", status).param("total", total)
+			.param("dataCriacao", dataCriacao).update();
+	}
+
+	public void inserirItem(String id, String pedidoId, String produtoId, int quantidade) {
+		jdbcClient.sql("""
+			INSERT INTO itens_pedido (id, pedido_id, produto_id, quantidade)
+			VALUES (:id, :pedidoId, :produtoId, :quantidade)
+			""").param("id", id).param("pedidoId", pedidoId).param("produtoId", produtoId)
+			.param("quantidade", quantidade).update();
+	}
+
 	private static List<Pedido> agrupar(List<Linha> linhas) {
 		var pedidos = new LinkedHashMap<String, Montagem>();
 		for (var linha : linhas) {
