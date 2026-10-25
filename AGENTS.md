@@ -13,7 +13,7 @@ O uso da API para pessoas está no `README.md`. Não copie essa documentação p
 | Tarefa | Comando |
 | --- | --- |
 | Testes | `./gradlew test` |
-| Um teste | `./gradlew test --tests com.dev.pedidos_api.CrudControllersTest` |
+| Um teste | `./gradlew test --tests com.dev.pedidos_api.PedidoControllerTest` |
 | Formatar | `./gradlew spotlessApply` |
 | Verificar formato | `./gradlew spotlessCheck` |
 | Subir a API | `./gradlew bootRun` |
@@ -35,9 +35,10 @@ A porta padrão é `8080`. A referência interativa é `/scalar` e o OpenAPI JSO
 
 ## Testes
 
-- JUnit 5 com `@SpringBootTest`.
-- HTTP em `src/test/java/com/dev/pedidos_api/CrudControllersTest.java`, com `MockMvc`.
-- Repositórios em `src/test/java/com/dev/pedidos_api/RepositoriosCrudTest.java`.
+- Use JUnit 5. Para testar a lógica de controllers, prefira testes unitários com Mockito (`@ExtendWith(MockitoExtension.class)`, `@Mock` e `@InjectMocks`).
+- Os testes unitários de `PedidoController` ficam em `src/test/java/com/dev/pedidos_api/PedidoControllerTest.java`. Acrescente novos cenários nesse arquivo, simulando os repositórios e verificando os resultados e os dados enviados à persistência.
+- Use `@SpringBootTest` e `MockMvc` quando o cenário exigir integração HTTP ou persistência real. Os testes HTTP ficam em `src/test/java/com/dev/pedidos_api/CrudControllersTest.java`, com banco isolado do banco local.
+- Testes de integração dos repositórios ficam em `src/test/java/com/dev/pedidos_api/RepositoriosCrudTest.java`.
 - Ao mudar um endpoint ou uma consulta, atualize o teste que cobre esse comportamento.
 
 ## Arquivos

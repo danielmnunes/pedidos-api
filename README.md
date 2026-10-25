@@ -38,6 +38,9 @@ A API fica em [http://localhost:8080](http://localhost:8080). Na primeira subida
 | `DELETE` | `/produtos/{id}` | Remove um produto |
 | `GET` | `/pedidos` | Lista os pedidos, com o nome do cliente e os itens |
 | `GET` | `/pedidos/{id}` | Lista o pedido desse id, ou uma lista vazia |
+| `POST` | `/pedidos` | Cria um pedido e retorna o pedido completo com seus itens |
+
+No `POST /pedidos`, envie `clienteId` e `itens`, cada um com `produtoId` e `quantidade`. Em caso de sucesso, a resposta HTTP `200` contém `id`, `cliente` (nome), `status`, `total`, `dataCriacao` e `itens` com `id`, `produto` (nome) e `quantidade`.
 
 No `POST /clientes`, `id` e `dataCadastro` são opcionais. Se faltarem, a API gera um UUID e a data atual. `vip`, `corporativo` e `bloqueado` omitidos viram `false`.
 

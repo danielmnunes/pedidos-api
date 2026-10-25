@@ -45,7 +45,7 @@ public class PedidoController {
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<String> criar(@RequestBody CriarPedidoRequest request) {
+	public ResponseEntity<?> criar(@RequestBody CriarPedidoRequest request) {
 		var cliente = clienteRepository.buscarPorId(request.clienteId()).orElse(null);
 		if (cliente == null) {
 			return ResponseEntity.badRequest().body("Cliente não encontrado.");
@@ -63,7 +63,8 @@ public class PedidoController {
 				return ResponseEntity.badRequest().body("Produto " + itemRequest.produtoId() + " não encontrado.");
 			}
 
-			itens.add(new ItemNovo(UUID.randomUUID().toString(), produto.id(), itemRequest.quantidade()));
+			itens.add(
+				new ItemNovo(UUID.randomUUID().toString(), produto.id(), produto.nome(), itemRequest.quantidade()));
 			total = total.add(produto.preco().multiply(BigDecimal.valueOf(itemRequest.quantidade())));
 		}
 
@@ -84,14 +85,17 @@ public class PedidoController {
 		}
 
 		var id = UUID.randomUUID().toString();
-		pedidos.inserir(id, cliente.id(), status, total, LocalDateTime.now().withNano(0).toString());
+		var dataCriacao = LocalDateTime.now().withNano(0).toString();
+		pedidos.inserir(id, cliente.id(), status, total, dataCriacao);
 		for (var item : itens) {
 			pedidos.inserirItem(item.id(), id, item.produtoId(), item.quantidade());
 		}
-		return ResponseEntity.ok(id);
+		var itensPedido = itens.stream().map(item -> new ItemPedido(item.id(), item.produto(), item.quantidade()))
+			.toList();
+		return ResponseEntity.ok(new Pedido(id, cliente.nome(), status, total, dataCriacao, itensPedido));
 	}
 
-	private record ItemNovo(String id, String produtoId, int quantidade) {
+	private record ItemNovo(String id, String produtoId, String produto, int quantidade) {
 	}
 
 }
