@@ -1,0 +1,47 @@
+meta {
+  name: Buscar pedido por id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/pedidos/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: {{pedidoId}}
+}
+
+headers {
+  Accept: application/json
+}
+
+script:post-response {
+  test("deve retornar 200 com uma lista", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody()).to.be.an("array");
+  });
+
+  test("deve retornar o pedido criado", function () {
+    const body = res.getBody();
+    expect(body).to.have.lengthOf(1);
+    expect(body[0].id).to.equal(bru.getVar("pedidoId"));
+    expect(body[0].cliente).to.be.a("string").and.not.be.empty;
+    expect(body[0].status).to.be.a("string").and.not.be.empty;
+    expect(body[0].itens).to.be.an("array");
+    body[0].itens.forEach((item) => {
+      expect(item).to.have.all.keys("id", "produto", "quantidade");
+      expect(item.quantidade).to.be.a("number");
+    });
+  });
+}
+
+docs {
+  Busca o pedido criado em `01 - Criar pedido VIP` (variável `pedidoId`).
+
+  Dependência: rode `01 - Criar pedido VIP` antes.
+
+  Esperado: `200` com um array de um pedido. Id inexistente devolve `200` com array vazio (ver `Buscar pedido inexistente`).
+}

@@ -61,6 +61,17 @@ Respostas de erro usam `application/problem+json` (RFC 9457).
 ./gradlew test
 ```
 
+### Testes manuais com Bruno
+
+A coleção fica em `bruno/` e usa o ambiente `Local` (`http://localhost:8080`).
+
+```bash
+cd bruno
+bru run --env Local -r
+```
+
+No app do Bruno, abra a pasta `bruno/` e selecione o ambiente `Local`. Rode `Clientes` antes de `Produtos` e `Pedidos`, porque as criações passam os ids adiante pelas variáveis da coleção.
+
 ## Persistência
 
 - Migrações do Flyway em `src/main/resources/db/migration`

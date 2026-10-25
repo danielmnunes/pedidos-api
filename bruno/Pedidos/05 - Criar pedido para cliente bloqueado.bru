@@ -1,0 +1,41 @@
+meta {
+  name: Criar pedido para cliente bloqueado
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/pedidos
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "clienteId": "{{clienteBloqueadoId}}",
+    "itens": [
+      { "produtoId": "{{produtoId}}", "quantidade": 1 }
+    ]
+  }
+}
+
+script:post-response {
+  test("deve retornar 400", function () {
+    expect(res.getStatus()).to.equal(400);
+  });
+
+  test("deve explicar que o cliente está bloqueado", function () {
+    expect(res.getBody()).to.equal("Cliente bloqueado.");
+  });
+}
+
+docs {
+  Tenta criar um pedido para o cliente bloqueado de exemplo (`clienteBloqueadoId`).
+
+  Esperado: `400` com o texto "Cliente bloqueado." e nenhum pedido gravado.
+}

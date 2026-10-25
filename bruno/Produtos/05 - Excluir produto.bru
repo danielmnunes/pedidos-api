@@ -1,0 +1,32 @@
+meta {
+  name: Excluir produto
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/produtos/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: {{produtoCriadoId}}
+}
+
+script:post-response {
+  test("deve retornar 204 sem corpo", function () {
+    expect(res.getStatus()).to.equal(204);
+    expect(res.getBody()).to.be.oneOf([null, ""]);
+  });
+}
+
+docs {
+  Remove o produto criado em `03 - Criar produto`.
+
+  Dependência: rode `03 - Criar produto` antes. Rodar duas vezes devolve `404` na segunda.
+
+  Esperado: `204` sem corpo.
+
+  Efeito: apaga o registro de teste do banco local, mantendo os dados de exemplo intactos.
+}

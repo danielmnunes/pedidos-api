@@ -1,0 +1,36 @@
+meta {
+  name: OpenAPI JSON
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/v3/api-docs
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}
+
+script:post-response {
+  test("deve retornar 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("deve publicar os endpoints principais", function () {
+    const body = res.getBody();
+    expect(body.openapi).to.be.a("string").and.not.be.empty;
+    expect(body.paths).to.have.property("/clientes");
+    expect(body.paths).to.have.property("/produtos");
+    expect(body.paths).to.have.property("/pedidos");
+    expect(body.paths).to.have.property("/pedidos/{id}");
+  });
+}
+
+docs {
+  Lê o OpenAPI publicado pela aplicação.
+
+  Esperado: `200` com `openapi` preenchido e os caminhos de clientes, produtos e pedidos.
+}

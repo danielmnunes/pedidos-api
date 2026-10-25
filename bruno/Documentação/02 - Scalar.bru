@@ -1,0 +1,24 @@
+meta {
+  name: Scalar
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/scalar
+  body: none
+  auth: none
+}
+
+script:post-response {
+  test("deve servir a página do Scalar", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getHeader("content-type")).to.contain("text/html");
+  });
+}
+
+docs {
+  Verifica a UI de documentação (Scalar) em `/scalar`.
+
+  Esperado: `200` com HTML.
+}

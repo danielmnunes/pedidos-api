@@ -1,0 +1,37 @@
+meta {
+  name: Pedidos API
+}
+
+docs {
+  # Pedidos API
+
+  Coleção Bruno para testar os endpoints da API (Spring Boot + SQLite).
+
+  ## Antes de rodar
+
+  1. Suba a API com `./gradlew bootRun`.
+  2. Selecione o ambiente **Local** (base `http://localhost:8080`).
+  3. Rode a pasta `Clientes` inteira antes de `Produtos` e `Pedidos`: as requisições de criação guardam os ids nas variáveis `clienteCriadoId`, `produtoCriadoId` e `pedidoId`.
+
+  ## Ordem e dependências
+
+  - `Clientes/03 - Criar cliente` grava `clienteCriadoId`, `clienteCriadoEmail` e `clienteCriadoDataCadastro`.
+  - `Clientes/04 - Atualizar cliente` e `Clientes/05 - Criar cliente com e-mail duplicado` dependem do cliente criado.
+  - `Clientes/06 - Excluir cliente` remove esse cliente. Rode o teste de e-mail duplicado antes da exclusão.
+  - `Produtos/03 - Criar produto` grava `produtoCriadoId`, usado em `04 - Atualizar produto` e `05 - Excluir produto`.
+  - `Pedidos/02 - Criar pedido VIP` grava `pedidoId`, usado em `03 - Buscar pedido por id`.
+
+  ## Dados e efeitos
+
+  - As consultas usam os dados de exemplo do `data.sql`.
+  - As requisições de criação, atualização e exclusão alteram o banco local `data/pedidos.db`. Elas criam e removem apenas registros próprios; os dados de exemplo não são alterados.
+  - Para voltar ao estado inicial, apague `data/pedidos.db` e suba a API novamente.
+
+  ## Linha de comando
+
+  ```bash
+  bru run bruno --env Local
+  ```
+
+  Use `bru run bruno --env Local --tests-only` para executar só as requisições com testes.
+}

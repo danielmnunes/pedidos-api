@@ -1,0 +1,15 @@
+meta {
+  name: Pedidos
+  seq: 3
+}
+
+docs {
+  Criação e consulta de pedidos. O total e o status são calculados pela API:
+
+  - cliente VIP: 10% de desconto e status `EmAnalise`;
+  - total acima de 2000: mais 5% de desconto;
+  - cliente corporativo com total acima de 5000: status `AguardandoValidacao`;
+  - cliente bloqueado: `400` com "Cliente bloqueado.".
+
+  As requisições usam os clientes e produtos de exemplo do `data.sql`.
+}

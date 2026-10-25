@@ -1,0 +1,39 @@
+meta {
+  name: Listar produtos
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/produtos
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}
+
+script:post-response {
+  test("deve retornar 200 e JSON", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getHeader("content-type")).to.contain("application/json");
+  });
+
+  test("deve retornar uma lista de produtos", function () {
+    const body = res.getBody();
+    expect(body).to.be.an("array").and.not.be.empty;
+    body.forEach((produto) => {
+      expect(produto).to.have.all.keys("id", "nome", "categoria", "preco", "estoque");
+      expect(produto.id).to.be.a("string").and.not.be.empty;
+      expect(produto.preco).to.be.a("number");
+      expect(produto.estoque).to.be.a("number");
+    });
+  });
+}
+
+docs {
+  Lista todos os produtos.
+
+  Esperado: `200` com um array de produtos contendo `id`, `nome`, `categoria`, `preco` e `estoque`.
+}
