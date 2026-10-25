@@ -1,0 +1,37 @@
+info:
+  name: Excluir cliente
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/clientes/:id"
+  params:
+    - name: id
+      value: "{{clienteCriadoId}}"
+      type: path
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 204 sem corpo", function () {
+          expect(res.getStatus()).to.equal(204);
+          expect(res.getBody()).to.be.oneOf([null, ""]);
+        });
+
+docs: |-
+  Remove o cliente criado em `03 - Criar cliente` e atualizado em `04 - Atualizar cliente`, depois do teste de e-mail duplicado.
+
+  Dependência: rode `03 - Criar cliente` antes. Rodar duas vezes devolve `404` na segunda.
+
+  Esperado: `204` sem corpo.
+
+  Efeito: apaga o registro de teste do banco local, mantendo os dados de exemplo intactos.

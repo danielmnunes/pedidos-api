@@ -1,0 +1,59 @@
+info:
+  name: Atualizar cliente
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/clientes/:id"
+  params:
+    - name: id
+      value: "{{clienteCriadoId}}"
+      type: path
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "nome": "Cliente de teste (atualizado)",
+        "email": "{{clienteCriadoEmail}}",
+        "vip": true,
+        "corporativo": false,
+        "bloqueado": false,
+        "dataCadastro": "{{clienteCriadoDataCadastro}}"
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("deve devolver o cliente com os dados atualizados", function () {
+          const body = res.getBody();
+          expect(body.id).to.equal(bru.getVar("clienteCriadoId"));
+          expect(body.nome).to.equal("Cliente de teste (atualizado)");
+          expect(body.vip).to.equal(true);
+          expect(body.corporativo).to.equal(false);
+          expect(body.bloqueado).to.equal(false);
+        });
+
+docs: |-
+  Atualiza o cliente criado em `03 - Criar cliente`.
+
+  Dependência: rode `03 - Criar cliente` antes; sem `clienteCriadoId` a API responde `404`.
+
+  Esperado: `200` com o cliente atualizado (`vip: true` e nome novo).

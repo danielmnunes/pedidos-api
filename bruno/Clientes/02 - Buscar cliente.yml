@@ -1,0 +1,46 @@
+info:
+  name: Buscar cliente
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}/clientes/:id"
+  params:
+    - name: id
+      value: "{{clienteId}}"
+      type: path
+  headers:
+    - name: Accept
+      value: application/json
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("deve retornar o cliente do id informado", function () {
+          const body = res.getBody();
+          expect(body.id).to.equal(bru.getEnvVar("clienteId"));
+          expect(body.nome).to.be.a("string").and.not.be.empty;
+          expect(body.email).to.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+          expect(body.bloqueado).to.be.a("boolean");
+          expect(body.dataCadastro).to.be.a("string").and.not.be.empty;
+        });
+
+docs: |-
+  Busca um cliente pelo id de exemplo do `data.sql` (variável `clienteId`).
+
+  Esperado: `200` com o cliente.
+
+  Para ver o `404`, use `Buscar cliente inexistente`.

@@ -1,0 +1,56 @@
+info:
+  name: Atualizar produto
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/produtos/:id"
+  params:
+    - name: id
+      value: "{{produtoCriadoId}}"
+      type: path
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "nome": "Produto de teste (atualizado)",
+        "categoria": "Teste",
+        "preco": 149.90,
+        "estoque": 5
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("deve devolver o produto com os dados atualizados", function () {
+          const body = res.getBody();
+          expect(body.id).to.equal(bru.getVar("produtoCriadoId"));
+          expect(body.nome).to.equal("Produto de teste (atualizado)");
+          expect(body.preco).to.equal(149.9);
+          expect(body.estoque).to.equal(5);
+        });
+
+docs: |-
+  Atualiza o produto criado em `03 - Criar produto`.
+
+  Dependência: rode `03 - Criar produto` antes; sem `produtoCriadoId` a API responde `404`.
+
+  Esperado: `200` com preço `149.90` e estoque `5`.

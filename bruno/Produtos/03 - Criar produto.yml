@@ -1,0 +1,61 @@
+info:
+  name: Criar produto
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/produtos"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "nome": "Produto de teste {{$timestamp}}",
+        "categoria": "Teste",
+        "preco": 99.90,
+        "estoque": 10
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 201 com Location", function () {
+          expect(res.getStatus()).to.equal(201);
+          expect(res.getHeader("location")).to.match(/^\/produtos\/[0-9a-f-]{36}$/);
+        });
+
+        test("deve retornar o produto criado", function () {
+          const body = res.getBody();
+          expect(body).to.have.all.keys("id", "nome", "categoria", "preco", "estoque");
+          expect(body.id).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+          expect(body.nome).to.match(/^Produto de teste \d+$/);
+          expect(body.categoria).to.equal("Teste");
+          expect(body.preco).to.equal(99.9);
+          expect(body.estoque).to.equal(10);
+        });
+
+        test("deve guardar o id do produto para as próximas requisições", function () {
+          bru.setVar("produtoCriadoId", res.getBody().id);
+        });
+
+docs: |-
+  Cria um produto sem `id`; a API gera o UUID.
+
+  O nome usa `{{$timestamp}}` para diferenciar execuções.
+
+  Esperado: `201`, `Location: /produtos/{id}` e o produto criado.
+
+  Efeito colateral: grava `produtoCriadoId` para as requisições seguintes.

@@ -63,7 +63,7 @@ Respostas de erro usam `application/problem+json` (RFC 9457).
 
 ### Testes manuais com Bruno
 
-A coleção fica em `bruno/` e usa o ambiente `Local` (`http://localhost:8080`).
+A coleção fica em `bruno/`, no formato OpenCollection YAML (`.yml`), e usa o ambiente `Local` (`http://localhost:8080`).
 
 ```bash
 cd bruno

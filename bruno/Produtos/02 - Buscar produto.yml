@@ -1,0 +1,44 @@
+info:
+  name: Buscar produto
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}/produtos/:id"
+  params:
+    - name: id
+      value: "{{produtoId}}"
+      type: path
+  headers:
+    - name: Accept
+      value: application/json
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("deve retornar o produto do id informado", function () {
+          const body = res.getBody();
+          expect(body.id).to.equal(bru.getEnvVar("produtoId"));
+          expect(body.nome).to.be.a("string").and.not.be.empty;
+          expect(body.categoria).to.be.a("string").and.not.be.empty;
+          expect(body.preco).to.be.a("number");
+          expect(body.estoque).to.be.a("number");
+        });
+
+docs: |-
+  Busca um produto pelo id de exemplo do `data.sql` (variável `produtoId`).
+
+  Esperado: `200` com o produto.

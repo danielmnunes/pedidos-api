@@ -1,11 +1,20 @@
-meta {
-  name: Pedidos API
-}
+opencollection: 1.0.0
 
-docs {
+info:
+  name: Pedidos API
+
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    presets:
+      defaultEnvironment: Local
+
+docs: |-
   # Pedidos API
 
-  Coleção Bruno para testar os endpoints da API (Spring Boot + SQLite).
+  Coleção OpenCollection (YAML) para testar os endpoints da API (Spring Boot + SQLite).
 
   ## Antes de rodar
 
@@ -19,7 +28,7 @@ docs {
   - `Clientes/04 - Atualizar cliente` e `Clientes/05 - Criar cliente com e-mail duplicado` dependem do cliente criado.
   - `Clientes/06 - Excluir cliente` remove esse cliente. Rode o teste de e-mail duplicado antes da exclusão.
   - `Produtos/03 - Criar produto` grava `produtoCriadoId`, usado em `04 - Atualizar produto` e `05 - Excluir produto`.
-  - `Pedidos/02 - Criar pedido VIP` grava `pedidoId`, usado em `03 - Buscar pedido por id`.
+  - `Pedidos/01 - Criar pedido VIP` grava `pedidoId`, usado em `02 - Buscar pedido por id`.
 
   ## Dados e efeitos
 
@@ -34,4 +43,3 @@ docs {
   ```
 
   Use `bru run bruno --env Local --tests-only` para executar só as requisições com testes.
-}

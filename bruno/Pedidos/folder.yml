@@ -1,9 +1,8 @@
-meta {
+info:
   name: Pedidos
   seq: 3
-}
 
-docs {
+docs: |-
   Criação e consulta de pedidos. O total e o status são calculados pela API:
 
   - cliente VIP: 10% de desconto e status `EmAnalise`;
@@ -12,4 +11,3 @@ docs {
   - cliente bloqueado: `400` com "Cliente bloqueado.".
 
   As requisições usam os clientes e produtos de exemplo do `data.sql`.
-}

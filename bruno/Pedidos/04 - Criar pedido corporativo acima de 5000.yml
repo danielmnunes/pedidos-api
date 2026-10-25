@@ -1,0 +1,51 @@
+info:
+  name: Criar pedido corporativo acima de 5000
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/pedidos"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "clienteId": "{{clienteCorporativoId}}",
+        "itens": [
+          { "produtoId": "{{produtoPremiumId}}", "quantidade": 3 }
+        ]
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("deve aplicar 5% de desconto e exigir validação", function () {
+          // 1.890,00 x 3 = 5.670,00; com 5% de desconto = 5.386,50
+          const body = res.getBody();
+          expect(body.status).to.equal("AguardandoValidacao");
+          expect(body.total).to.be.closeTo(5386.5, 0.01);
+          expect(body.itens).to.have.lengthOf(1);
+          expect(body.itens[0].quantidade).to.equal(3);
+        });
+
+docs: |-
+  Cria um pedido para o cliente corporativo de exemplo (`clienteCorporativoId`) com três cadeiras ergonômicas.
+
+  Esperado: `200`, total `5.386,50` (5% de desconto por passar de 2.000) e status `AguardandoValidacao` por ser corporativo acima de 5.000.

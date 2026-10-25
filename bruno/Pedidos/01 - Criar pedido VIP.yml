@@ -1,0 +1,65 @@
+info:
+  name: Criar pedido VIP
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/pedidos"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "clienteId": "{{clienteVipId}}",
+        "itens": [
+          { "produtoId": "{{produtoId}}", "quantidade": 2 },
+          { "produtoId": "{{produtoSecundarioId}}", "quantidade": 1 }
+        ]
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("deve retornar o pedido com status EmAnalise", function () {
+          const body = res.getBody();
+          expect(body).to.have.all.keys("id", "cliente", "status", "total", "dataCriacao", "itens");
+          expect(body.id).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+          expect(body.cliente).to.be.a("string").and.not.be.empty;
+          expect(body.status).to.equal("EmAnalise");
+          expect(body.total).to.be.a("number");
+          expect(body.dataCriacao).to.be.a("string").and.not.be.empty;
+          expect(body.itens).to.be.an("array").with.lengthOf(2);
+        });
+
+        test("deve aplicar 10% de desconto no total", function () {
+          // 349,90 x 2 + 129,90 = 829,70; com 10% de desconto = 746,73
+          expect(res.getBody().total).to.be.closeTo(746.73, 0.01);
+        });
+
+        test("deve guardar o id do pedido para as próximas requisições", function () {
+          bru.setVar("pedidoId", res.getBody().id);
+        });
+
+docs: |-
+  Cria um pedido para o cliente VIP de exemplo (`clienteVipId`).
+
+  Esperado: `200` com `status` igual a `EmAnalise`, `cliente` com o nome e `itens` com produto e quantidade.
+
+  Efeito colateral: grava `pedidoId` para `Buscar pedido por id`.

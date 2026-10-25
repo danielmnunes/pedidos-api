@@ -1,0 +1,36 @@
+info:
+  name: Buscar pedido inexistente
+  type: http
+  seq: 8
+
+http:
+  method: GET
+  url: "{{baseUrl}}/pedidos/:id"
+  params:
+    - name: id
+      value: "{{pedidoInexistenteId}}"
+      type: path
+  headers:
+    - name: Accept
+      value: application/json
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 200 com lista vazia", function () {
+          expect(res.getStatus()).to.equal(200);
+          expect(res.getBody()).to.be.an("array").and.to.be.empty;
+        });
+
+docs: |-
+  Busca um pedido que não existe (`pedidoInexistenteId`).
+
+  Esperado: `200` com `[]`. Diferente de clientes e produtos, pedido inexistente não gera `404`.

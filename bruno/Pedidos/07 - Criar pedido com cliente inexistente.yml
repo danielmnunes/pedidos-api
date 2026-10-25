@@ -1,0 +1,46 @@
+info:
+  name: Criar pedido com cliente inexistente
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{baseUrl}}/pedidos"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "clienteId": "{{clienteInexistenteId}}",
+        "itens": [
+          { "produtoId": "{{produtoId}}", "quantidade": 1 }
+        ]
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 400", function () {
+          expect(res.getStatus()).to.equal(400);
+        });
+
+        test("deve explicar que o cliente não foi encontrado", function () {
+          expect(res.getBody()).to.equal("Cliente não encontrado.");
+        });
+
+docs: |-
+  Envia um `clienteId` que não existe.
+
+  Esperado: `400` com o texto "Cliente não encontrado.".
