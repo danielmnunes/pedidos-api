@@ -43,4 +43,17 @@ class PedidoControllerTest {
 		verify(pedidos).listar();
 	}
 
+	@Test
+	@DisplayName("devolve os pedidos do id informado")
+	void listarPorId() {
+		var pedido = new Pedido("1", "Ana Ferreira", "Pendente", new BigDecimal("10.00"), "2026-10-25T00:00:00",
+			List.of());
+		when(pedidos.listarPorId("1")).thenReturn(List.of(pedido));
+
+		var resultado = controller.listarPorId("1");
+
+		assertEquals(List.of(pedido), resultado);
+		verify(pedidos).listarPorId("1");
+	}
+
 }
