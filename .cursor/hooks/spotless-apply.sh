@@ -8,7 +8,17 @@ try:
     data = json.loads(raw) if raw.strip() else {}
 except json.JSONDecodeError:
     data = {}
-print(data.get("file_path") or "")')
+if not isinstance(data, dict):
+    data = {}
+tool_input = data.get("tool_input") or data.get("toolInput") or {}
+if isinstance(tool_input, str):
+    try:
+        tool_input = json.loads(tool_input)
+    except json.JSONDecodeError:
+        tool_input = {}
+if not isinstance(tool_input, dict):
+    tool_input = {}
+print(data.get("file_path") or data.get("filePath") or tool_input.get("file_path") or tool_input.get("filePath") or tool_input.get("path") or "")')
 
 case "$file_path" in
 *.java) ;;

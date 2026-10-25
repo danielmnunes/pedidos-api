@@ -1,0 +1,16 @@
+{
+	"hooks": {
+		"PostToolUse": [
+			{
+				"matcher": "Edit|Write|hashline_edit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "$CLAUDE_PROJECT_DIR/.cursor/hooks/spotless-apply.sh",
+						"timeout": 180
+					}
+				]
+			}
+		]
+	}
+}
