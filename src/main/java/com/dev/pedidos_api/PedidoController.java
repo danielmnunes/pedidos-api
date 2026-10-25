@@ -51,6 +51,10 @@ public class PedidoController {
 			return ResponseEntity.badRequest().body("Cliente não encontrado.");
 		}
 
+		if (cliente.bloqueado()) {
+			return ResponseEntity.badRequest().body("Cliente bloqueado.");
+		}
+
 		var itens = new ArrayList<ItemNovo>();
 		var total = BigDecimal.ZERO;
 		for (var itemRequest : request.itens()) {
@@ -70,8 +74,17 @@ public class PedidoController {
 			total = total.subtract(total.multiply(new BigDecimal("0.05")));
 		}
 
+		var status = "Pendente";
+		if (cliente.vip()) {
+			status = "EmAnalise";
+		}
+
+		if (cliente.corporativo() && total.compareTo(new BigDecimal("5000")) > 0) {
+			status = "AguardandoValidacao";
+		}
+
 		var id = UUID.randomUUID().toString();
-		pedidos.inserir(id, cliente.id(), "Pendente", total, LocalDateTime.now().withNano(0).toString());
+		pedidos.inserir(id, cliente.id(), status, total, LocalDateTime.now().withNano(0).toString());
 		for (var item : itens) {
 			pedidos.inserirItem(item.id(), id, item.produtoId(), item.quantidade());
 		}
