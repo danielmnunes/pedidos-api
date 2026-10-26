@@ -29,6 +29,8 @@ docs: |-
   - `Clientes/06 - Excluir cliente` remove esse cliente. Rode o teste de e-mail duplicado antes da exclusão.
   - `Produtos/03 - Criar produto` grava `produtoCriadoId`, usado em `04 - Atualizar produto` e `05 - Excluir produto`.
   - `Pedidos/01 - Criar pedido VIP` grava `pedidoId`, usado em `02 - Buscar pedido por id`.
+  - `Clientes/08 - Criar cliente ignora id` e `Produtos/07 - Criar produto ignora id` conferem que um `id` no corpo não é gravado e são apagados na requisição seguinte.
+  - `Produtos/09 - Criar produto sem estoque` e `Pedidos/09` a `11` conferem o `400` de campo numérico omitido.
 
   ## Dados e efeitos
 

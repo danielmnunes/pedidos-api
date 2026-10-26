@@ -8,6 +8,7 @@ docs: |-
   - cliente VIP: 10% de desconto e status `EmAnalise`;
   - total acima de 2000: mais 5% de desconto;
   - cliente corporativo com total acima de 5000: status `AguardandoValidacao`;
-  - cliente bloqueado: `400` com "Cliente bloqueado.".
+  - cliente bloqueado: `400` com "Cliente bloqueado.";
+  - `clienteId`, `produtoId` ou `quantidade` omitidos: `400` em `application/problem+json`.
 
   As requisições usam os clientes e produtos de exemplo do `data.sql`.

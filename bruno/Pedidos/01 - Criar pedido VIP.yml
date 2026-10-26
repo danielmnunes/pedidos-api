@@ -15,10 +15,10 @@ http:
     type: json
     data: |-
       {
-        "clienteId": "{{clienteVipId}}",
+        "clienteId": {{clienteVipId}},
         "itens": [
-          { "produtoId": "{{produtoId}}", "quantidade": 2 },
-          { "produtoId": "{{produtoSecundarioId}}", "quantidade": 1 }
+          { "produtoId": {{produtoId}}, "quantidade": 2 },
+          { "produtoId": {{produtoSecundarioId}}, "quantidade": 1 }
         ]
       }
 
@@ -40,7 +40,7 @@ runtime:
         test("deve retornar o pedido com status EmAnalise", function () {
           const body = res.getBody();
           expect(body).to.have.all.keys("id", "cliente", "status", "total", "dataCriacao", "itens");
-          expect(body.id).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+          expect(body.id).to.be.a("number").and.to.be.greaterThan(0);
           expect(body.cliente).to.be.a("string").and.not.be.empty;
           expect(body.status).to.equal("EmAnalise");
           expect(body.total).to.be.a("number");

@@ -42,7 +42,7 @@ A API fica em [http://localhost:8080](http://localhost:8080). Na primeira subida
 
 No `POST /pedidos`, envie `clienteId` e `itens`, cada um com `produtoId` e `quantidade`. Em caso de sucesso, a resposta HTTP `200` contém `id`, `cliente` (nome), `status`, `total`, `dataCriacao` e `itens` com `id`, `produto` (nome) e `quantidade`.
 
-No `POST /clientes`, `id` e `dataCadastro` são opcionais. Se faltarem, a API gera um UUID e a data atual. `vip`, `corporativo` e `bloqueado` omitidos viram `false`.
+No `POST /clientes` e no `POST /produtos`, a API gera o id numérico por autoincremento e ignora qualquer `id` enviado no corpo. No cliente, `dataCadastro` é opcional; se faltar, a API usa a data atual. `vip`, `corporativo` e `bloqueado` omitidos viram `false`. `estoque`, `clienteId`, `produtoId` e `quantidade` são obrigatórios.
 
 ```bash
 curl -s http://localhost:8080/clientes
@@ -52,6 +52,7 @@ curl -s http://localhost:8080/clientes
 
 Respostas de erro usam `application/problem+json` (RFC 9457).
 
+- `400` em `application/problem+json` quando falta `clienteId`, `produtoId`, `quantidade`, `itens` ou `estoque`
 - `404` quando o id não existe
 - `409` quando o e-mail do cliente já está cadastrado
 
@@ -75,5 +76,6 @@ No app do Bruno, abra a pasta `bruno/` e selecione o ambiente `Local`. Rode `Cli
 ## Persistência
 
 - Migrações do Flyway em `src/main/resources/db/migration`
+- Chaves `INTEGER PRIMARY KEY AUTOINCREMENT`: um id excluído não volta a ser usado
 - Carga inicial em `src/main/resources/data.sql`, com `INSERT OR IGNORE`
 - O arquivo `data/*.db` fica só na máquina local e não entra no Git

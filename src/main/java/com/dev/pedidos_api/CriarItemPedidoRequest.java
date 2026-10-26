@@ -1,4 +1,7 @@
 package com.dev.pedidos_api;
 
-public record CriarItemPedidoRequest(String produtoId, int quantidade) {
+import jakarta.validation.constraints.NotNull;
+
+public record CriarItemPedidoRequest(@NotNull(message = "Informe o produto") Long produtoId,
+	@NotNull(message = "Informe a quantidade") Integer quantidade) {
 }

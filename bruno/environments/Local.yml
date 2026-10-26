@@ -3,25 +3,25 @@ variables:
   - name: baseUrl
     value: http://localhost:8080
   - name: clienteId
-    value: 1c5d07e5-e1f1-5218-b971-ed105a63c9bd
+    value: 3
   - name: clienteVipId
-    value: 97b36cfb-76f7-5c00-a772-af57c9288ab3
+    value: 1
   - name: clienteCorporativoId
-    value: 3ae71c03-da13-57db-bb8d-e0708c29c75b
+    value: 2
   - name: clienteBloqueadoId
-    value: 008158ba-95df-5ddf-a341-738b95258dbe
+    value: 4
   - name: clienteInexistenteId
-    value: 00000000-0000-4000-8000-000000000000
+    value: 999
   - name: produtoId
-    value: cf6d3d8d-d3a0-554d-9336-2e968b4a5d85
+    value: 1
   - name: produtoSecundarioId
-    value: b1fa0332-9ac6-5e0f-a270-dbf1c3d040f9
+    value: 2
   - name: produtoPremiumId
-    value: d5734acf-c4c7-53f0-884d-e0c64c4f1f32
+    value: 4
   - name: produtoInexistenteId
-    value: 00000000-0000-4000-8000-000000000001
+    value: 999
   - name: pedidoInexistenteId
-    value: 00000000-0000-4000-8000-000000000002
+    value: 999
   - name: clienteCriadoId
     value: ""
   - name: clienteCriadoEmail

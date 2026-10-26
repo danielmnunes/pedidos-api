@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ClienteRepository {
 
-	private static final RowMapper<Cliente> MAPEADOR = (rs, rowNum) -> new Cliente(rs.getString("id"),
+	private static final RowMapper<Cliente> MAPEADOR = (rs, rowNum) -> new Cliente(rs.getLong("id"),
 		rs.getString("nome"), rs.getString("email"), rs.getInt("vip") != 0, rs.getInt("corporativo") != 0,
 		rs.getInt("bloqueado") != 0, rs.getString("data_cadastro"));
 
@@ -20,16 +20,17 @@ public class ClienteRepository {
 		this.jdbcClient = jdbcClient;
 	}
 
-	public void inserir(Cliente cliente) {
-		jdbcClient.sql("""
-			INSERT INTO clientes (id, nome, email, vip, corporativo, bloqueado, data_cadastro)
-			VALUES (:id, :nome, :email, :vip, :corporativo, :bloqueado, :dataCadastro)
-			""").param("id", cliente.id()).param("nome", cliente.nome()).param("email", cliente.email())
-			.param("vip", cliente.vip() ? 1 : 0).param("corporativo", cliente.corporativo() ? 1 : 0)
-			.param("bloqueado", cliente.bloqueado() ? 1 : 0).param("dataCadastro", cliente.dataCadastro()).update();
+	public long inserir(Cliente cliente) {
+		return jdbcClient.sql("""
+			INSERT INTO clientes (nome, email, vip, corporativo, bloqueado, data_cadastro)
+			VALUES (:nome, :email, :vip, :corporativo, :bloqueado, :dataCadastro)
+			RETURNING id
+			""").param("nome", cliente.nome()).param("email", cliente.email()).param("vip", cliente.vip() ? 1 : 0)
+			.param("corporativo", cliente.corporativo() ? 1 : 0).param("bloqueado", cliente.bloqueado() ? 1 : 0)
+			.param("dataCadastro", cliente.dataCadastro()).query(Long.class).single();
 	}
 
-	public Optional<Cliente> buscarPorId(String id) {
+	public Optional<Cliente> buscarPorId(long id) {
 		return jdbcClient.sql("""
 			SELECT id, nome, email, vip, corporativo, bloqueado, data_cadastro
 			FROM clientes
@@ -60,7 +61,7 @@ public class ClienteRepository {
 			.param("bloqueado", cliente.bloqueado() ? 1 : 0).param("dataCadastro", cliente.dataCadastro()).update();
 	}
 
-	public int excluir(String id) {
+	public int excluir(long id) {
 		return jdbcClient.sql("DELETE FROM clientes WHERE id = :id").param("id", id).update();
 	}
 

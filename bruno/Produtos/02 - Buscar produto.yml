@@ -31,7 +31,7 @@ runtime:
 
         test("deve retornar o produto do id informado", function () {
           const body = res.getBody();
-          expect(body.id).to.equal(bru.getEnvVar("produtoId"));
+          expect(Number(body.id)).to.equal(Number(bru.getEnvVar("produtoId")));
           expect(body.nome).to.be.a("string").and.not.be.empty;
           expect(body.categoria).to.be.a("string").and.not.be.empty;
           expect(body.preco).to.be.a("number");

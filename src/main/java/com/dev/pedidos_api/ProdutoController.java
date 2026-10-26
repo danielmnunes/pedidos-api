@@ -1,8 +1,8 @@
 package com.dev.pedidos_api;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/produtos")
@@ -33,21 +36,21 @@ public class ProdutoController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> buscar(@PathVariable String id) {
+	public ResponseEntity<?> buscar(@PathVariable long id) {
 		return produtos.buscarPorId(id).<ResponseEntity<?>>map(ResponseEntity::ok)
 			.orElseGet(() -> Problemas.naoEncontrado("Produto não encontrado", "/produtos/" + id));
 	}
 
 	@PostMapping
-	public ResponseEntity<Produto> inserir(@RequestBody Produto produto) {
-		var id = produto.id() != null && !produto.id().isBlank() ? produto.id() : UUID.randomUUID().toString();
-		var novo = new Produto(id, produto.nome(), produto.categoria(), produto.preco(), produto.estoque());
-		produtos.inserir(novo);
-		return ResponseEntity.created(URI.create("/produtos/" + id)).body(novo);
+	public ResponseEntity<Produto> inserir(@Valid @RequestBody ProdutoBody produto) {
+		var novo = new Produto(0, produto.nome(), produto.categoria(), produto.preco(), produto.estoque());
+		var id = produtos.inserir(novo);
+		var criado = new Produto(id, novo.nome(), novo.categoria(), novo.preco(), novo.estoque());
+		return ResponseEntity.created(URI.create("/produtos/" + id)).body(criado);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> atualizar(@PathVariable String id, @RequestBody Produto produto) {
+	public ResponseEntity<?> atualizar(@PathVariable long id, @Valid @RequestBody ProdutoBody produto) {
 		var atualizado = new Produto(id, produto.nome(), produto.categoria(), produto.preco(), produto.estoque());
 		if (produtos.atualizar(atualizado) == 0) {
 			return Problemas.naoEncontrado("Produto não encontrado", "/produtos/" + id);
@@ -56,11 +59,15 @@ public class ProdutoController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> excluir(@PathVariable String id) {
+	public ResponseEntity<?> excluir(@PathVariable long id) {
 		if (produtos.excluir(id) == 0) {
 			return Problemas.naoEncontrado("Produto não encontrado", "/produtos/" + id);
 		}
 		return ResponseEntity.noContent().build();
+	}
+
+	private record ProdutoBody(String nome, String categoria, BigDecimal preco,
+		@NotNull(message = "Informe o estoque") Integer estoque) {
 	}
 
 }

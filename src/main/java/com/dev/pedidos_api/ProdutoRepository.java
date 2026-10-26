@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ProdutoRepository {
 
-	private static final RowMapper<Produto> MAPEADOR = (rs, rowNum) -> new Produto(rs.getString("id"),
+	private static final RowMapper<Produto> MAPEADOR = (rs, rowNum) -> new Produto(rs.getLong("id"),
 		rs.getString("nome"), rs.getString("categoria"), rs.getBigDecimal("preco"), rs.getInt("estoque"));
 
 	private final JdbcClient jdbcClient;
@@ -19,15 +19,16 @@ public class ProdutoRepository {
 		this.jdbcClient = jdbcClient;
 	}
 
-	public void inserir(Produto produto) {
-		jdbcClient.sql("""
-			INSERT INTO produtos (id, nome, categoria, preco, estoque)
-			VALUES (:id, :nome, :categoria, :preco, :estoque)
-			""").param("id", produto.id()).param("nome", produto.nome()).param("categoria", produto.categoria())
-			.param("preco", produto.preco()).param("estoque", produto.estoque()).update();
+	public long inserir(Produto produto) {
+		return jdbcClient.sql("""
+			INSERT INTO produtos (nome, categoria, preco, estoque)
+			VALUES (:nome, :categoria, :preco, :estoque)
+			RETURNING id
+			""").param("nome", produto.nome()).param("categoria", produto.categoria()).param("preco", produto.preco())
+			.param("estoque", produto.estoque()).query(Long.class).single();
 	}
 
-	public Optional<Produto> buscarPorId(String id) {
+	public Optional<Produto> buscarPorId(long id) {
 		return jdbcClient.sql("""
 			SELECT id, nome, categoria, preco, estoque
 			FROM produtos
@@ -55,7 +56,7 @@ public class ProdutoRepository {
 			.param("preco", produto.preco()).param("estoque", produto.estoque()).update();
 	}
 
-	public int excluir(String id) {
+	public int excluir(long id) {
 		return jdbcClient.sql("DELETE FROM produtos WHERE id = :id").param("id", id).update();
 	}
 

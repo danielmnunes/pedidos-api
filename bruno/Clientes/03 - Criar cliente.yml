@@ -35,7 +35,7 @@ runtime:
       code: |-
         test("deve retornar 201 com Location", function () {
           expect(res.getStatus()).to.equal(201);
-          expect(res.getHeader("location")).to.match(/^\/clientes\/[0-9a-f-]{36}$/);
+          expect(res.getHeader("location")).to.match(/^\/clientes\/\d+$/);
         });
 
         test("deve retornar o cliente criado", function () {
@@ -49,7 +49,7 @@ runtime:
             "bloqueado",
             "dataCadastro"
           );
-          expect(body.id).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+          expect(body.id).to.be.a("number").and.to.be.greaterThan(0);
           expect(body.nome).to.equal("Cliente de teste");
           expect(body.email).to.match(/^cliente\.teste\.\d+@exemplo\.com$/);
           expect(body.vip).to.equal(false);
@@ -66,7 +66,7 @@ runtime:
         });
 
 docs: |-
-  Cria um cliente sem `id` e sem `dataCadastro`: a API gera ambos.
+  Cria um cliente sem `dataCadastro`: a API gera a data atual e o id numérico. Um `id` enviado no corpo é ignorado.
 
   O e-mail usa `{{$timestamp}}` para não conflitar com execuções anteriores.
 

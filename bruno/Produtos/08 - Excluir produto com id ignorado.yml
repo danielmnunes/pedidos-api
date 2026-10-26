@@ -1,0 +1,35 @@
+info:
+  name: Excluir produto com id ignorado
+  type: http
+  seq: 8
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/produtos/:id"
+  params:
+    - name: id
+      value: "{{produtoIdIgnorado}}"
+      type: path
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 204 sem corpo", function () {
+          expect(res.getStatus()).to.equal(204);
+          expect(res.getBody()).to.be.oneOf([null, ""]);
+        });
+
+docs: |-
+  Remove o produto criado em `07 - Criar produto ignora id`.
+
+  Dependência: rode `07 - Criar produto ignora id` antes.
+
+  Esperado: `204` sem corpo. O produto de exemplo com id 1 permanece.

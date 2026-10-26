@@ -39,6 +39,7 @@ runtime:
           expect(body[0].itens).to.be.an("array");
           body[0].itens.forEach((item) => {
             expect(item).to.have.all.keys("id", "produto", "quantidade");
+            expect(item.id).to.be.a("number").and.to.be.greaterThan(0);
             expect(item.quantidade).to.be.a("number");
           });
         });

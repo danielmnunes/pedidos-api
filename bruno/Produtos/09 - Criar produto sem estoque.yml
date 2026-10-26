@@ -1,0 +1,49 @@
+info:
+  name: Criar produto sem estoque
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: "{{baseUrl}}/produtos"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "nome": "Produto sem estoque",
+        "categoria": "Teste",
+        "preco": 10.00
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 400 em application/problem+json", function () {
+          expect(res.getStatus()).to.equal(400);
+          expect(res.getHeader("content-type")).to.contain("application/problem+json");
+        });
+
+        test("deve pedir o estoque", function () {
+          const body = res.getBody();
+          expect(body.status).to.equal(400);
+          expect(body.detail).to.equal("Informe o estoque");
+          expect(body.instance).to.equal("/produtos");
+        });
+
+docs: |-
+  Omite `estoque`. O campo numérico não pode assumir 0 em silêncio.
+
+  Esperado: `400` com `application/problem+json` e `detail` igual a "Informe o estoque".

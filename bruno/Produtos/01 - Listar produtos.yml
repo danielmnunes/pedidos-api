@@ -31,7 +31,7 @@ runtime:
           expect(body).to.be.an("array").and.not.be.empty;
           body.forEach((produto) => {
             expect(produto).to.have.all.keys("id", "nome", "categoria", "preco", "estoque");
-            expect(produto.id).to.be.a("string").and.not.be.empty;
+            expect(produto.id).to.be.a("number").and.to.be.greaterThan(0);
             expect(produto.preco).to.be.a("number");
             expect(produto.estoque).to.be.a("number");
           });

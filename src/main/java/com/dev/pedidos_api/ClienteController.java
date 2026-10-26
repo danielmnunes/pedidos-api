@@ -3,7 +3,6 @@ package com.dev.pedidos_api;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,25 +33,26 @@ public class ClienteController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> buscar(@PathVariable String id) {
+	public ResponseEntity<?> buscar(@PathVariable long id) {
 		return clientes.buscarPorId(id).<ResponseEntity<?>>map(ResponseEntity::ok)
 			.orElseGet(() -> Problemas.naoEncontrado("Cliente não encontrado", "/clientes/" + id));
 	}
 
 	@PostMapping
 	public ResponseEntity<Cliente> inserir(@RequestBody ClienteBody cliente) {
-		var id = texto(cliente.id()) ? cliente.id() : UUID.randomUUID().toString();
-		var dataCadastro = texto(cliente.dataCadastro())
+		var dataCadastro = cliente.dataCadastro() != null && !cliente.dataCadastro().isBlank()
 			? cliente.dataCadastro()
 			: LocalDateTime.now().withNano(0).toString();
-		var novo = new Cliente(id, cliente.nome(), cliente.email(), Boolean.TRUE.equals(cliente.vip()),
+		var novo = new Cliente(0, cliente.nome(), cliente.email(), Boolean.TRUE.equals(cliente.vip()),
 			Boolean.TRUE.equals(cliente.corporativo()), Boolean.TRUE.equals(cliente.bloqueado()), dataCadastro);
-		clientes.inserir(novo);
-		return ResponseEntity.created(URI.create("/clientes/" + id)).body(novo);
+		var id = clientes.inserir(novo);
+		var criado = new Cliente(id, novo.nome(), novo.email(), novo.vip(), novo.corporativo(), novo.bloqueado(),
+			novo.dataCadastro());
+		return ResponseEntity.created(URI.create("/clientes/" + id)).body(criado);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> atualizar(@PathVariable String id, @RequestBody ClienteBody cliente) {
+	public ResponseEntity<?> atualizar(@PathVariable long id, @RequestBody ClienteBody cliente) {
 		var atualizado = new Cliente(id, cliente.nome(), cliente.email(), Boolean.TRUE.equals(cliente.vip()),
 			Boolean.TRUE.equals(cliente.corporativo()), Boolean.TRUE.equals(cliente.bloqueado()),
 			cliente.dataCadastro());
@@ -63,19 +63,15 @@ public class ClienteController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> excluir(@PathVariable String id) {
+	public ResponseEntity<?> excluir(@PathVariable long id) {
 		if (clientes.excluir(id) == 0) {
 			return Problemas.naoEncontrado("Cliente não encontrado", "/clientes/" + id);
 		}
 		return ResponseEntity.noContent().build();
 	}
 
-	private static boolean texto(String valor) {
-		return valor != null && !valor.isBlank();
-	}
-
-	private record ClienteBody(String id, String nome, String email, Boolean vip, Boolean corporativo,
-		Boolean bloqueado, String dataCadastro) {
+	private record ClienteBody(String nome, String email, Boolean vip, Boolean corporativo, Boolean bloqueado,
+		String dataCadastro) {
 	}
 
 }
