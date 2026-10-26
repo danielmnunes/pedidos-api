@@ -1,5 +1,5 @@
 CREATE TABLE clientes (
-    id            INTEGER NOT NULL PRIMARY KEY,
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
     nome          TEXT    NOT NULL,
     email         TEXT    NOT NULL,
     vip           INTEGER NOT NULL DEFAULT 0,
@@ -11,7 +11,7 @@ CREATE TABLE clientes (
 CREATE UNIQUE INDEX idx_clientes_email ON clientes (email);
 
 CREATE TABLE produtos (
-    id        INTEGER NOT NULL PRIMARY KEY,
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
     nome      TEXT    NOT NULL,
     categoria TEXT    NOT NULL,
     preco     NUMERIC NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE produtos (
 );
 
 CREATE TABLE pedidos (
-    id           INTEGER NOT NULL PRIMARY KEY,
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
     cliente_id   INTEGER NOT NULL,
     status       TEXT    NOT NULL,
     total        NUMERIC NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE pedidos (
 CREATE INDEX idx_pedidos_cliente_id ON pedidos (cliente_id);
 
 CREATE TABLE itens_pedido (
-    id         INTEGER NOT NULL PRIMARY KEY,
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
     pedido_id  INTEGER NOT NULL,
     produto_id INTEGER NOT NULL,
     quantidade INTEGER NOT NULL,
