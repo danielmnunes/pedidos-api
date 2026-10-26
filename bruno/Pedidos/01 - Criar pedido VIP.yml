@@ -49,8 +49,8 @@ runtime:
         });
 
         test("deve aplicar 10% de desconto no total", function () {
-          // 350,00 x 2 + 90,00 = 790,00; com 10% de desconto = 711,00
-          expect(res.getBody().total).to.be.closeTo(711.0, 0.01);
+          // 349,90 x 2 + 129,90 = 829,70; com 10% de desconto = 746,73
+          expect(res.getBody().total).to.be.closeTo(746.73, 0.01);
         });
 
         test("deve guardar o id do pedido para as próximas requisições", function () {

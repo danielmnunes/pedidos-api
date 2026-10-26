@@ -37,15 +37,15 @@ runtime:
         });
 
         test("deve aplicar 5% de desconto e exigir validação", function () {
-          // 1.900,00 x 3 = 5.700,00; com 5% de desconto = 5.415,00
+          // 1.890,00 x 3 = 5.670,00; com 5% de desconto = 5.386,50
           const body = res.getBody();
           expect(body.status).to.equal("AguardandoValidacao");
-          expect(body.total).to.be.closeTo(5415.0, 0.01);
+          expect(body.total).to.be.closeTo(5386.5, 0.01);
           expect(body.itens).to.have.lengthOf(1);
           expect(body.itens[0].quantidade).to.equal(3);
         });
 
 docs: |-
-  Cria um pedido para o cliente corporativo de exemplo (`clienteCorporativoId`) com três monitores.
+  Cria um pedido para o cliente corporativo de exemplo (`clienteCorporativoId`) com três cadeiras ergonômicas.
 
-  Esperado: `200`, total `5.415,00` (5% de desconto por passar de 2.000) e status `AguardandoValidacao` por ser corporativo acima de 5.000.
+  Esperado: `200`, total `5.386,50` (5% de desconto por passar de 2.000) e status `AguardandoValidacao` por ser corporativo acima de 5.000.

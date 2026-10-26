@@ -13,7 +13,7 @@ variables:
   - name: clienteInexistenteId
     value: 999
   - name: produtoId
-    value: 3
+    value: 1
   - name: produtoSecundarioId
     value: 2
   - name: produtoPremiumId
