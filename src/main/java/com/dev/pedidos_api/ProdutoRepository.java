@@ -20,14 +20,6 @@ public class ProdutoRepository {
 	}
 
 	public long inserir(Produto produto) {
-		if (produto.id() > 0) {
-			jdbcClient.sql("""
-				INSERT INTO produtos (id, nome, categoria, preco, estoque)
-				VALUES (:id, :nome, :categoria, :preco, :estoque)
-				""").param("id", produto.id()).param("nome", produto.nome()).param("categoria", produto.categoria())
-				.param("preco", produto.preco()).param("estoque", produto.estoque()).update();
-			return produto.id();
-		}
 		return jdbcClient.sql("""
 			INSERT INTO produtos (nome, categoria, preco, estoque)
 			VALUES (:nome, :categoria, :preco, :estoque)

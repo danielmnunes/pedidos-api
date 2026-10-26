@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/pedidos")
 @Tag(name = "Pedidos", description = "Criação e consulta de pedidos")
@@ -44,7 +46,7 @@ public class PedidoController {
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<?> criar(@RequestBody CriarPedidoRequest request) {
+	public ResponseEntity<?> criar(@Valid @RequestBody CriarPedidoRequest request) {
 		var cliente = clienteRepository.buscarPorId(request.clienteId()).orElse(null);
 		if (cliente == null) {
 			return ResponseEntity.badRequest().body("Cliente não encontrado.");

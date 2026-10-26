@@ -52,7 +52,7 @@ runtime:
         });
 
 docs: |-
-  Cria um produto sem `id`; a API gera o id numérico.
+  Cria um produto. A API gera o id numérico e ignora qualquer `id` enviado no corpo.
 
   O nome usa `{{$timestamp}}` para diferenciar execuções.
 

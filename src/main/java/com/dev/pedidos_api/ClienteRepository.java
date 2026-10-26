@@ -21,15 +21,6 @@ public class ClienteRepository {
 	}
 
 	public long inserir(Cliente cliente) {
-		if (cliente.id() > 0) {
-			jdbcClient.sql("""
-				INSERT INTO clientes (id, nome, email, vip, corporativo, bloqueado, data_cadastro)
-				VALUES (:id, :nome, :email, :vip, :corporativo, :bloqueado, :dataCadastro)
-				""").param("id", cliente.id()).param("nome", cliente.nome()).param("email", cliente.email())
-				.param("vip", cliente.vip() ? 1 : 0).param("corporativo", cliente.corporativo() ? 1 : 0)
-				.param("bloqueado", cliente.bloqueado() ? 1 : 0).param("dataCadastro", cliente.dataCadastro()).update();
-			return cliente.id();
-		}
 		return jdbcClient.sql("""
 			INSERT INTO clientes (nome, email, vip, corporativo, bloqueado, data_cadastro)
 			VALUES (:nome, :email, :vip, :corporativo, :bloqueado, :dataCadastro)

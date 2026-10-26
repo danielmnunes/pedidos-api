@@ -66,7 +66,7 @@ runtime:
         });
 
 docs: |-
-  Cria um cliente sem `id` e sem `dataCadastro`: a API gera ambos.
+  Cria um cliente sem `dataCadastro`: a API gera a data atual e o id numérico. Um `id` enviado no corpo é ignorado.
 
   O e-mail usa `{{$timestamp}}` para não conflitar com execuções anteriores.
 

@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 @RestController
 @RequestMapping("/produtos")
 @Tag(name = "Produtos", description = "Cadastro de produtos")
@@ -39,16 +42,15 @@ public class ProdutoController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Produto> inserir(@RequestBody ProdutoBody produto) {
-		var novo = new Produto(produto.id() == null ? 0 : produto.id(), produto.nome(), produto.categoria(),
-			produto.preco(), produto.estoque());
+	public ResponseEntity<Produto> inserir(@Valid @RequestBody ProdutoBody produto) {
+		var novo = new Produto(0, produto.nome(), produto.categoria(), produto.preco(), produto.estoque());
 		var id = produtos.inserir(novo);
 		var criado = new Produto(id, novo.nome(), novo.categoria(), novo.preco(), novo.estoque());
 		return ResponseEntity.created(URI.create("/produtos/" + id)).body(criado);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> atualizar(@PathVariable long id, @RequestBody ProdutoBody produto) {
+	public ResponseEntity<?> atualizar(@PathVariable long id, @Valid @RequestBody ProdutoBody produto) {
 		var atualizado = new Produto(id, produto.nome(), produto.categoria(), produto.preco(), produto.estoque());
 		if (produtos.atualizar(atualizado) == 0) {
 			return Problemas.naoEncontrado("Produto não encontrado", "/produtos/" + id);
@@ -64,7 +66,8 @@ public class ProdutoController {
 		return ResponseEntity.noContent().build();
 	}
 
-	private record ProdutoBody(Long id, String nome, String categoria, BigDecimal preco, int estoque) {
+	private record ProdutoBody(String nome, String categoria, BigDecimal preco,
+		@NotNull(message = "Informe o estoque") Integer estoque) {
 	}
 
 }

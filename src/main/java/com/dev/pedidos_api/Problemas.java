@@ -13,10 +13,17 @@ final class Problemas {
 	}
 
 	static ResponseEntity<ProblemDetail> naoEncontrado(String detalhe, String caminho) {
-		var problema = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, detalhe);
+		return resposta(HttpStatus.NOT_FOUND, detalhe, caminho);
+	}
+
+	static ResponseEntity<ProblemDetail> requisicaoInvalida(String detalhe, String caminho) {
+		return resposta(HttpStatus.BAD_REQUEST, detalhe, caminho);
+	}
+
+	private static ResponseEntity<ProblemDetail> resposta(HttpStatus status, String detalhe, String caminho) {
+		var problema = ProblemDetail.forStatusAndDetail(status, detalhe);
 		problema.setInstance(URI.create(caminho));
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_PROBLEM_JSON)
-			.body(problema);
+		return ResponseEntity.status(status).contentType(MediaType.APPLICATION_PROBLEM_JSON).body(problema);
 	}
 
 }

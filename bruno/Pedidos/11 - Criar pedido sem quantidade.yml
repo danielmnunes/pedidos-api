@@ -1,0 +1,49 @@
+info:
+  name: Criar pedido sem quantidade
+  type: http
+  seq: 11
+
+http:
+  method: POST
+  url: "{{baseUrl}}/pedidos"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "clienteId": {{clienteId}},
+        "itens": [
+          { "produtoId": {{produtoId}} }
+        ]
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 400 em application/problem+json", function () {
+          expect(res.getStatus()).to.equal(400);
+          expect(res.getHeader("content-type")).to.contain("application/problem+json");
+        });
+
+        test("deve pedir a quantidade", function () {
+          const body = res.getBody();
+          expect(body.detail).to.equal("Informe a quantidade");
+          expect(body.instance).to.equal("/pedidos");
+        });
+
+docs: |-
+  Omite `quantidade` do item. O campo não pode assumir 0 em silêncio.
+
+  Esperado: `400` com `detail` igual a "Informe a quantidade".

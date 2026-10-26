@@ -1,0 +1,53 @@
+info:
+  name: Criar cliente ignora id
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/clientes"
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "id": 1,
+        "nome": "Cliente com id informado",
+        "email": "cliente.id.{{$timestamp}}@exemplo.com",
+        "vip": false,
+        "corporativo": false,
+        "bloqueado": false
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: true
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("deve retornar 201 com Location do id gerado", function () {
+          expect(res.getStatus()).to.equal(201);
+          const id = res.getBody().id;
+          expect(id).to.be.a("number").and.to.not.equal(1);
+          expect(res.getHeader("location")).to.equal("/clientes/" + id);
+        });
+
+        test("deve guardar o id gerado para exclusão", function () {
+          bru.setVar("clienteIdIgnorado", res.getBody().id);
+        });
+
+docs: |-
+  Envia `id` 1, que já pertence à Ana Ferreira. A API ignora esse valor e grava outro id.
+
+  Esperado: `201` com `id` diferente de 1 e `Location` apontando para o id gerado.
+
+  Efeito colateral: grava `clienteIdIgnorado` para `09 - Excluir cliente com id ignorado`.

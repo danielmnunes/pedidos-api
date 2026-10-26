@@ -43,9 +43,8 @@ public class ClienteController {
 		var dataCadastro = cliente.dataCadastro() != null && !cliente.dataCadastro().isBlank()
 			? cliente.dataCadastro()
 			: LocalDateTime.now().withNano(0).toString();
-		var novo = new Cliente(cliente.id() == null ? 0 : cliente.id(), cliente.nome(), cliente.email(),
-			Boolean.TRUE.equals(cliente.vip()), Boolean.TRUE.equals(cliente.corporativo()),
-			Boolean.TRUE.equals(cliente.bloqueado()), dataCadastro);
+		var novo = new Cliente(0, cliente.nome(), cliente.email(), Boolean.TRUE.equals(cliente.vip()),
+			Boolean.TRUE.equals(cliente.corporativo()), Boolean.TRUE.equals(cliente.bloqueado()), dataCadastro);
 		var id = clientes.inserir(novo);
 		var criado = new Cliente(id, novo.nome(), novo.email(), novo.vip(), novo.corporativo(), novo.bloqueado(),
 			novo.dataCadastro());
@@ -71,7 +70,7 @@ public class ClienteController {
 		return ResponseEntity.noContent().build();
 	}
 
-	private record ClienteBody(Long id, String nome, String email, Boolean vip, Boolean corporativo, Boolean bloqueado,
+	private record ClienteBody(String nome, String email, Boolean vip, Boolean corporativo, Boolean bloqueado,
 		String dataCadastro) {
 	}
 
