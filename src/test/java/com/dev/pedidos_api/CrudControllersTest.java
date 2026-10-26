@@ -61,10 +61,10 @@ class CrudControllersTest {
 
 		var id = idDe(resultado);
 		assertNotEquals(1L, id);
-		assertTrue(id > 7);
+		assertTrue(id > 6);
 		assertEquals("/produtos/" + id, resultado.getResponse().getHeader("Location"));
 		mockMvc.perform(get("/produtos/1")).andExpect(status().isOk())
-			.andExpect(jsonPath("$.nome").value("Teclado mecânico")).andExpect(jsonPath("$.estoque").value(42));
+			.andExpect(jsonPath("$.nome").value("Notebook Pro 15")).andExpect(jsonPath("$.estoque").value(42));
 	}
 
 	@Test
@@ -103,7 +103,7 @@ class CrudControllersTest {
 	@DisplayName("atualização sem estoque devolve 400 e mantém o valor")
 	void atualizarProdutoSemEstoque() throws Exception {
 		mockMvc.perform(put("/produtos/1").contentType(MediaType.APPLICATION_JSON).content("""
-			{"nome":"Teclado mecânico","categoria":"Periféricos","preco":349.90}
+			{"nome":"Notebook Pro 15","categoria":"Informática","preco":6500.00}
 			""")).andExpect(status().isBadRequest()).andExpect(problema("Informe o estoque", "/produtos/1"));
 
 		mockMvc.perform(get("/produtos/1")).andExpect(status().isOk()).andExpect(jsonPath("$.estoque").value(42));

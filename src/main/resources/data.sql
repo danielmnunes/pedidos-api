@@ -5,10 +5,9 @@ INSERT OR IGNORE INTO clientes (id, nome, email, vip, corporativo, bloqueado, da
     (4, 'Danilo Reis', 'danilo.reis@pedidosnet.com.br', 0, 0, 1, '2023-11-30T00:00:00');
 
 INSERT OR IGNORE INTO produtos (id, nome, categoria, preco, estoque) VALUES
-    (1, 'Teclado mecânico', 'Periféricos', 349.90, 42),
-    (2, 'Mouse sem fio', 'Periféricos', 129.90, 80),
-    (3, 'Monitor 27 polegadas', 'Monitores', 1599.00, 15),
-    (4, 'Cadeira ergonômica', 'Móveis', 1890.00, 8),
-    (5, 'Headset com microfone', 'Áudio', 279.50, 36),
-    (6, 'SSD 1 TB', 'Armazenamento', 449.00, 54),
-    (7, 'Webcam Full HD', 'Periféricos', 219.90, 27);
+    (1, 'Notebook Pro 15', 'Informática', 6500, 42),
+    (2, 'Mouse sem fio', 'Periféricos', 90, 150),
+    (3, 'Teclado Mecânico', 'Periféricos', 350, 80),
+    (4, 'Monitor 27 144Hz', 'Informática', 1900, 25),
+    (5, 'Webcam Full HD', 'Periféricos', 260, 60),
+    (6, 'Headset Gamer', 'Áudio', 430, 40);
