@@ -39,7 +39,7 @@ runtime:
               "bloqueado",
               "dataCadastro"
             );
-            expect(cliente.id).to.be.a("string").and.not.be.empty;
+            expect(cliente.id).to.be.a("number").and.to.be.greaterThan(0);
             expect(cliente.email).to.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
             expect(cliente.vip).to.be.a("boolean");
           });

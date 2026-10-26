@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +38,7 @@ public class PedidoController {
 	}
 
 	@GetMapping("/{id}")
-	public List<Pedido> listarPorId(@PathVariable String id) {
+	public List<Pedido> listarPorId(@PathVariable long id) {
 		return pedidos.listarPorId(id);
 	}
 
@@ -63,8 +62,7 @@ public class PedidoController {
 				return ResponseEntity.badRequest().body("Produto " + itemRequest.produtoId() + " não encontrado.");
 			}
 
-			itens.add(
-				new ItemNovo(UUID.randomUUID().toString(), produto.id(), produto.nome(), itemRequest.quantidade()));
+			itens.add(new ItemNovo(produto.id(), produto.nome(), itemRequest.quantidade()));
 			total = total.add(produto.preco().multiply(BigDecimal.valueOf(itemRequest.quantidade())));
 		}
 
@@ -84,18 +82,17 @@ public class PedidoController {
 			status = "AguardandoValidacao";
 		}
 
-		var id = UUID.randomUUID().toString();
 		var dataCriacao = LocalDateTime.now().withNano(0).toString();
-		pedidos.inserir(id, cliente.id(), status, total, dataCriacao);
+		var id = pedidos.inserir(cliente.id(), status, total, dataCriacao);
+		var itensPedido = new ArrayList<ItemPedido>();
 		for (var item : itens) {
-			pedidos.inserirItem(item.id(), id, item.produtoId(), item.quantidade());
+			var itemId = pedidos.inserirItem(id, item.produtoId(), item.quantidade());
+			itensPedido.add(new ItemPedido(itemId, item.produto(), item.quantidade()));
 		}
-		var itensPedido = itens.stream().map(item -> new ItemPedido(item.id(), item.produto(), item.quantidade()))
-			.toList();
-		return ResponseEntity.ok(new Pedido(id, cliente.nome(), status, total, dataCriacao, itensPedido));
+		return ResponseEntity.ok(new Pedido(id, cliente.nome(), status, total, dataCriacao, List.copyOf(itensPedido)));
 	}
 
-	private record ItemNovo(String id, String produtoId, String produto, int quantidade) {
+	private record ItemNovo(long produtoId, String produto, int quantidade) {
 	}
 
 }

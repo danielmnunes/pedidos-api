@@ -1,4 +1,4 @@
 package com.dev.pedidos_api;
 
-public record CriarItemPedidoRequest(String produtoId, int quantidade) {
+public record CriarItemPedidoRequest(long produtoId, int quantidade) {
 }

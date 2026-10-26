@@ -34,13 +34,13 @@ runtime:
       code: |-
         test("deve retornar 201 com Location", function () {
           expect(res.getStatus()).to.equal(201);
-          expect(res.getHeader("location")).to.match(/^\/produtos\/[0-9a-f-]{36}$/);
+          expect(res.getHeader("location")).to.match(/^\/produtos\/\d+$/);
         });
 
         test("deve retornar o produto criado", function () {
           const body = res.getBody();
           expect(body).to.have.all.keys("id", "nome", "categoria", "preco", "estoque");
-          expect(body.id).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+          expect(body.id).to.be.a("number").and.to.be.greaterThan(0);
           expect(body.nome).to.match(/^Produto de teste \d+$/);
           expect(body.categoria).to.equal("Teste");
           expect(body.preco).to.equal(99.9);
@@ -52,7 +52,7 @@ runtime:
         });
 
 docs: |-
-  Cria um produto sem `id`; a API gera o UUID.
+  Cria um produto sem `id`; a API gera o id numérico.
 
   O nome usa `{{$timestamp}}` para diferenciar execuções.
 

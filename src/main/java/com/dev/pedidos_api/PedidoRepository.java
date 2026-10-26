@@ -27,9 +27,11 @@ public class PedidoRepository {
 		LEFT JOIN produtos pr ON pr.id = i.produto_id
 		""";
 
-	private static final RowMapper<Linha> LINHA = (rs, rowNum) -> new Linha(rs.getString("id"), rs.getString("cliente"),
-		rs.getString("status"), rs.getBigDecimal("total"), rs.getString("data_criacao"), rs.getString("item_id"),
-		rs.getString("produto"), rs.getInt("quantidade"));
+	private static final RowMapper<Linha> LINHA = (rs, rowNum) -> {
+		var itemId = rs.getObject("item_id") == null ? null : rs.getLong("item_id");
+		return new Linha(rs.getLong("id"), rs.getString("cliente"), rs.getString("status"), rs.getBigDecimal("total"),
+			rs.getString("data_criacao"), itemId, rs.getString("produto"), rs.getInt("quantidade"));
+	};
 
 	private final JdbcClient jdbcClient;
 
@@ -43,31 +45,33 @@ public class PedidoRepository {
 			""").query(LINHA).list());
 	}
 
-	public List<Pedido> listarPorId(String pedidoId) {
+	public List<Pedido> listarPorId(long pedidoId) {
 		return agrupar(jdbcClient.sql(CONSULTA + """
 			WHERE p.id = :pedidoId
 			ORDER BY p.data_criacao, p.id, i.id
 			""").param("pedidoId", pedidoId).query(LINHA).list());
 	}
 
-	public void inserir(String id, String clienteId, String status, BigDecimal total, String dataCriacao) {
-		jdbcClient.sql("""
-			INSERT INTO pedidos (id, cliente_id, status, total, data_criacao)
-			VALUES (:id, :clienteId, :status, :total, :dataCriacao)
-			""").param("id", id).param("clienteId", clienteId).param("status", status).param("total", total)
-			.param("dataCriacao", dataCriacao).update();
+	public long inserir(long clienteId, String status, BigDecimal total, String dataCriacao) {
+		return jdbcClient.sql("""
+			INSERT INTO pedidos (cliente_id, status, total, data_criacao)
+			VALUES (:clienteId, :status, :total, :dataCriacao)
+			RETURNING id
+			""").param("clienteId", clienteId).param("status", status).param("total", total)
+			.param("dataCriacao", dataCriacao).query(Long.class).single();
 	}
 
-	public void inserirItem(String id, String pedidoId, String produtoId, int quantidade) {
-		jdbcClient.sql("""
-			INSERT INTO itens_pedido (id, pedido_id, produto_id, quantidade)
-			VALUES (:id, :pedidoId, :produtoId, :quantidade)
-			""").param("id", id).param("pedidoId", pedidoId).param("produtoId", produtoId)
-			.param("quantidade", quantidade).update();
+	public long inserirItem(long pedidoId, long produtoId, int quantidade) {
+		return jdbcClient.sql("""
+			INSERT INTO itens_pedido (pedido_id, produto_id, quantidade)
+			VALUES (:pedidoId, :produtoId, :quantidade)
+			RETURNING id
+			""").param("pedidoId", pedidoId).param("produtoId", produtoId).param("quantidade", quantidade)
+			.query(Long.class).single();
 	}
 
 	private static List<Pedido> agrupar(List<Linha> linhas) {
-		var pedidos = new LinkedHashMap<String, Montagem>();
+		var pedidos = new LinkedHashMap<Long, Montagem>();
 		for (var linha : linhas) {
 			var montagem = pedidos.computeIfAbsent(linha.id(), id -> new Montagem(linha));
 			if (linha.itemId() != null) {
@@ -78,12 +82,12 @@ public class PedidoRepository {
 			montagem.total, montagem.dataCriacao, List.copyOf(montagem.itens))).toList();
 	}
 
-	private record Linha(String id, String cliente, String status, BigDecimal total, String dataCriacao, String itemId,
+	private record Linha(long id, String cliente, String status, BigDecimal total, String dataCriacao, Long itemId,
 		String produto, int quantidade) {
 	}
 
 	private static final class Montagem {
-		private final String id;
+		private final long id;
 		private final String cliente;
 		private final String status;
 		private final BigDecimal total;

@@ -3,6 +3,9 @@ package com.dev.pedidos_api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -39,7 +42,7 @@ class PedidoControllerTest {
 	@Test
 	@DisplayName("devolve os pedidos do repositório")
 	void listar() {
-		var pedido = new Pedido("1", "Ana Ferreira", "Pendente", new BigDecimal("10.00"), "2026-10-25T00:00:00",
+		var pedido = new Pedido(1, "Ana Ferreira", "Pendente", new BigDecimal("10.00"), "2026-10-25T00:00:00",
 			List.of());
 		when(pedidos.listar()).thenReturn(List.of(pedido));
 
@@ -52,26 +55,29 @@ class PedidoControllerTest {
 	@Test
 	@DisplayName("devolve os pedidos do id informado")
 	void listarPorId() {
-		var pedido = new Pedido("1", "Ana Ferreira", "Pendente", new BigDecimal("10.00"), "2026-10-25T00:00:00",
+		var pedido = new Pedido(1, "Ana Ferreira", "Pendente", new BigDecimal("10.00"), "2026-10-25T00:00:00",
 			List.of());
-		when(pedidos.listarPorId("1")).thenReturn(List.of(pedido));
+		when(pedidos.listarPorId(1)).thenReturn(List.of(pedido));
 
-		var resultado = controller.listarPorId("1");
+		var resultado = controller.listarPorId(1);
 
 		assertEquals(List.of(pedido), resultado);
-		verify(pedidos).listarPorId("1");
+		verify(pedidos).listarPorId(1);
 	}
 
 	@Test
 	@DisplayName("cria pedido corporativo não VIP com dois monitores e três headsets do print")
 	void criarPedidoCorporativoNaoVip() {
-		var cliente = new Cliente("cliente-print", "Cliente corporativo", "print@example.com", false, true, false,
+		var cliente = new Cliente(10, "Cliente corporativo", "print@example.com", false, true, false,
 			"2026-10-25T00:00:00");
-		var monitor = new Produto("monitor-print", "Monitor", "Monitores", new BigDecimal("1899.00"), 2);
-		var headset = new Produto("headset-print", "Headset", "Áudio", new BigDecimal("429.90"), 3);
+		var monitor = new Produto(20, "Monitor", "Monitores", new BigDecimal("1899.00"), 2);
+		var headset = new Produto(21, "Headset", "Áudio", new BigDecimal("429.90"), 3);
 		when(clienteRepository.buscarPorId(cliente.id())).thenReturn(Optional.of(cliente));
 		when(produtoRepository.buscarPorId(monitor.id())).thenReturn(Optional.of(monitor));
 		when(produtoRepository.buscarPorId(headset.id())).thenReturn(Optional.of(headset));
+		when(pedidos.inserir(eq(cliente.id()), eq("Pendente"), any(BigDecimal.class), anyString())).thenReturn(7L);
+		when(pedidos.inserirItem(7, monitor.id(), 2)).thenReturn(100L);
+		when(pedidos.inserirItem(7, headset.id(), 3)).thenReturn(101L);
 		var request = new CriarPedidoRequest(cliente.id(),
 			List.of(new CriarItemPedidoRequest(monitor.id(), 2), new CriarItemPedidoRequest(headset.id(), 3)));
 
@@ -79,7 +85,7 @@ class PedidoControllerTest {
 
 		assertEquals(HttpStatus.OK, resposta.getStatusCode());
 		var pedido = assertInstanceOf(Pedido.class, resposta.getBody());
-		assertNotNull(pedido.id());
+		assertEquals(7, pedido.id());
 		assertNotNull(LocalDateTime.parse(pedido.dataCriacao()));
 		assertEquals(cliente.nome(), pedido.cliente());
 		assertEquals("Pendente", pedido.status());
@@ -89,15 +95,15 @@ class PedidoControllerTest {
 		assertEquals(2, pedido.itens().size());
 		var itemMonitor = pedido.itens().get(0);
 		var itemHeadset = pedido.itens().get(1);
-		assertNotNull(itemMonitor.id());
+		assertEquals(100, itemMonitor.id());
 		assertEquals(monitor.nome(), itemMonitor.produto());
 		assertEquals(2, itemMonitor.quantidade());
-		assertNotNull(itemHeadset.id());
+		assertEquals(101, itemHeadset.id());
 		assertEquals(headset.nome(), itemHeadset.produto());
 		assertEquals(3, itemHeadset.quantidade());
-		verify(pedidos).inserir(pedido.id(), cliente.id(), pedido.status(), pedido.total(), pedido.dataCriacao());
-		verify(pedidos).inserirItem(itemMonitor.id(), pedido.id(), monitor.id(), 2);
-		verify(pedidos).inserirItem(itemHeadset.id(), pedido.id(), headset.id(), 3);
+		verify(pedidos).inserir(cliente.id(), pedido.status(), pedido.total(), pedido.dataCriacao());
+		verify(pedidos).inserirItem(pedido.id(), monitor.id(), 2);
+		verify(pedidos).inserirItem(pedido.id(), headset.id(), 3);
 		verifyNoMoreInteractions(pedidos);
 	}
 

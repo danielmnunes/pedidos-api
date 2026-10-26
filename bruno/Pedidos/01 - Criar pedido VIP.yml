@@ -15,10 +15,10 @@ http:
     type: json
     data: |-
       {
-        "clienteId": "{{clienteVipId}}",
+        "clienteId": {{clienteVipId}},
         "itens": [
-          { "produtoId": "{{produtoId}}", "quantidade": 2 },
-          { "produtoId": "{{produtoSecundarioId}}", "quantidade": 1 }
+          { "produtoId": {{produtoId}}, "quantidade": 2 },
+          { "produtoId": {{produtoSecundarioId}}, "quantidade": 1 }
         ]
       }
 
@@ -40,7 +40,7 @@ runtime:
         test("deve retornar o pedido com status EmAnalise", function () {
           const body = res.getBody();
           expect(body).to.have.all.keys("id", "cliente", "status", "total", "dataCriacao", "itens");
-          expect(body.id).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+          expect(body.id).to.be.a("number").and.to.be.greaterThan(0);
           expect(body.cliente).to.be.a("string").and.not.be.empty;
           expect(body.status).to.equal("EmAnalise");
           expect(body.total).to.be.a("number");
@@ -49,8 +49,8 @@ runtime:
         });
 
         test("deve aplicar 10% de desconto no total", function () {
-          // 349,90 x 2 + 129,90 = 829,70; com 10% de desconto = 746,73
-          expect(res.getBody().total).to.be.closeTo(746.73, 0.01);
+          // 350,00 x 2 + 90,00 = 790,00; com 10% de desconto = 711,00
+          expect(res.getBody().total).to.be.closeTo(711.0, 0.01);
         });
 
         test("deve guardar o id do pedido para as próximas requisições", function () {

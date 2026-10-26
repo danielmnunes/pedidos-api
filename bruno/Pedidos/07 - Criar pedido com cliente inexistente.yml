@@ -15,9 +15,9 @@ http:
     type: json
     data: |-
       {
-        "clienteId": "{{clienteInexistenteId}}",
+        "clienteId": {{clienteInexistenteId}},
         "itens": [
-          { "produtoId": "{{produtoId}}", "quantidade": 1 }
+          { "produtoId": {{produtoId}}, "quantidade": 1 }
         ]
       }
 

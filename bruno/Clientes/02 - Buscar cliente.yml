@@ -31,7 +31,7 @@ runtime:
 
         test("deve retornar o cliente do id informado", function () {
           const body = res.getBody();
-          expect(body.id).to.equal(bru.getEnvVar("clienteId"));
+          expect(Number(body.id)).to.equal(Number(bru.getEnvVar("clienteId")));
           expect(body.nome).to.be.a("string").and.not.be.empty;
           expect(body.email).to.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
           expect(body.bloqueado).to.be.a("boolean");

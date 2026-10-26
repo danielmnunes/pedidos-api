@@ -42,7 +42,7 @@ A API fica em [http://localhost:8080](http://localhost:8080). Na primeira subida
 
 No `POST /pedidos`, envie `clienteId` e `itens`, cada um com `produtoId` e `quantidade`. Em caso de sucesso, a resposta HTTP `200` contém `id`, `cliente` (nome), `status`, `total`, `dataCriacao` e `itens` com `id`, `produto` (nome) e `quantidade`.
 
-No `POST /clientes`, `id` e `dataCadastro` são opcionais. Se faltarem, a API gera um UUID e a data atual. `vip`, `corporativo` e `bloqueado` omitidos viram `false`.
+No `POST /clientes`, `id` e `dataCadastro` são opcionais. Se faltarem, a API gera o id numérico (autoincremento) e a data atual. `vip`, `corporativo` e `bloqueado` omitidos viram `false`.
 
 ```bash
 curl -s http://localhost:8080/clientes
